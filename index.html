@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Character Spark</title>
+    <style>
+        :root {
+            --button-color: #FFD700; /* Yellow */
+            --button-text: #333333;
+            --random-color: #808080; /* Gray */
+            --dark: #333333;
+            --light: #f8f9fa;
+            --card-bg: #ffffff;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 700px;
+            width: 100%;
+            margin: 0 auto;
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: var(--dark);
+            margin-bottom: 20px;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+        
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        button {
+            background-color: var(--button-color);
+            color: var(--button-text);
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+            opacity: 0.9;
+        }
+        
+        #generateRandom { 
+            background-color: var(--random-color);
+            color: white;
+        }
+        
+        .character-card {
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border: 1px solid #eee;
+            min-height: 280px;
+            margin-bottom: 15px;
+        }
+        
+        .character-card p {
+            margin-bottom: 12px;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        .character-card strong {
+            color: var(--dark);
+        }
+        
+        .color-palette {
+            display: flex;
+            height: 40px;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-top: 20px;
+            border: 1px solid #eee;
+        }
+        
+        .color-swatch {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 300; /* Thinner font */
+            font-size: 0.6rem; /* Smaller font */
+            text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+            transition: all 0.2s;
+        }
+        
+        @media (max-width: 600px) {
+            .controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.7rem;
+            }
+            
+            .character-card {
+                padding: 20px;
+                min-height: 240px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Character Spark</h1>
+        
+        <div class="controls">
+            <button id="generateType">Type</button>
+            <button id="generatePersonality">Personality</button>
+            <button id="generateItem">Item</button>
+            <button id="generateEnvironment">Environment</button>
+            <button id="generateColors">Colors</button>
+            <button id="generateRandom">Random Character</button>
+        </div>
+        
+        <div class="character-card" id="characterResult">
+            <p><strong>Type:</strong> <span id="typeOutput">Human with fox traits</span></p>
+            <p><strong>Personality:</strong> <span id="personalityOutput">Cheerful but talks in rhymes</span></p>
+            <p><strong>Item:</strong> <span id="itemOutput">A leather satchel full of oddities</span></p>
+            <p><strong>Environment:</strong> <span id="environmentOutput">Steampunk city rooftops</span></p>
+            <div class="color-palette" id="colorPalette">
+                <!-- Colors will be generated here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Character components
+        const types = [
+            "Human with fox traits", "Mechanical owl", "Half-shark warrior",
+            "Plant-based android", "Floating jellyfish mage", "Crystal-armored knight",
+            "Ratfolk inventor", "Living shadow creature", "Clockwork detective",
+            "Bioluminescent wanderer", "Dragon-blooded scholar", "Fungal forest guardian"
+        ];
+        
+        const personalities = [
+            "Cheerful but talks in rhymes", "Grumpy but secretly kind",
+            "Curious to a fault", "Stoic with dry humor", "Energetic and impulsive",
+            "Wise but forgetful", "Shy but observant", "Confident but clumsy",
+            "Sarcastic with hidden depth", "Naive but surprisingly capable"
+        ];
+        
+        const items = [
+            "A leather satchel full of oddities", "A glowing energy sword",
+            "A robotic pet companion", "A book that writes itself",
+            "A mask that shows truth", "A pocket dimension in a locket",
+            "A mechanical arm with tools", "A cloak that changes color"
+        ];
+        
+        const environments = [
+            "Steampunk city rooftops", "Floating island archipelago",
+            "Underground crystal caves", "Abandoned space station",
+            "Magical university library", "Post-apocalyptic marketplace"
+        ];
+        
+        // Color generation function - more random
+        function generateRandomColor() {
+            const hue = Math.floor(Math.random() * 360);
+            const saturation = 70 + Math.floor(Math.random() * 30);
+            const lightness = 30 + Math.floor(Math.random() * 40);
+            return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+        }
+        
+        function generateRandomPalette() {
+            const palette = [];
+            for (let i = 0; i < 5; i++) {
+                palette.push(generateRandomColor());
+            }
+            return palette;
+        }
+        
+        // DOM elements
+        const typeOutput = document.getElementById('typeOutput');
+        const personalityOutput = document.getElementById('personalityOutput');
+        const itemOutput = document.getElementById('itemOutput');
+        const environmentOutput = document.getElementById('environmentOutput');
+        const colorPalette = document.getElementById('colorPalette');
+        
+        // Helper functions
+        function getRandomItem(array) {
+            return array[Math.floor(Math.random() * array.length)];
+        }
+        
+        function generateType() {
+            typeOutput.textContent = getRandomItem(types);
+        }
+        
+        function generatePersonality() {
+            personalityOutput.textContent = getRandomItem(personalities);
+        }
+        
+        function generateItem() {
+            itemOutput.textContent = getRandomItem(items);
+        }
+        
+        function generateEnvironment() {
+            environmentOutput.textContent = getRandomItem(environments);
+        }
+        
+        function generateColors() {
+            const palette = generateRandomPalette();
+            colorPalette.innerHTML = '';
+            palette.forEach(color => {
+                const swatch = document.createElement('div');
+                swatch.className = 'color-swatch';
+                swatch.style.background = color;
+                
+                // Convert HSL to HEX for display
+                const hex = hslToHex(color);
+                swatch.textContent = hex;
+                
+                // Adjust text color for light backgrounds
+                const lightness = parseInt(color.split(',')[2]);
+                if (lightness > 60) {
+                    swatch.style.color = '#333';
+                    swatch.style.textShadow = 'none';
+                }
+                
+                colorPalette.appendChild(swatch);
+            });
+        }
+        
+        // HSL to HEX conversion
+        function hslToHex(hsl) {
+            let [h, s, l] = hsl.match(/\d+/g);
+            h = parseInt(h);
+            s = parseInt(s)/100;
+            l = parseInt(l)/100;
+            
+            let c = (1 - Math.abs(2 * l - 1)) * s;
+            let x = c * (1 - Math.abs((h / 60) % 2 - 1));
+            let m = l - c/2;
+            let r, g, b;
+            
+            if (0 <= h && h < 60) {
+                [r, g, b] = [c, x, 0];
+            } else if (60 <= h && h < 120) {
+                [r, g, b] = [x, c, 0];
+            } else if (120 <= h && h < 180) {
+                [r, g, b] = [0, c, x];
+            } else if (180 <= h && h < 240) {
+                [r, g, b] = [0, x, c];
+            } else if (240 <= h && h < 300) {
+                [r, g, b] = [x, 0, c];
+            } else if (300 <= h && h < 360) {
+                [r, g, b] = [c, 0, x];
+            }
+            
+            r = Math.round((r + m) * 255).toString(16).padStart(2, '0');
+            g = Math.round((g + m) * 255).toString(16).padStart(2, '0');
+            b = Math.round((b + m) * 255).toString(16).padStart(2, '0');
+            
+            return `#${r}${g}${b}`.toUpperCase();
+        }
+        
+        function generateRandomCharacter() {
+            generateType();
+            generatePersonality();
+            generateItem();
+            generateEnvironment();
+            generateColors();
+        }
+        
+        // Event listeners
+        document.getElementById('generateType').addEventListener('click', generateType);
+        document.getElementById('generatePersonality').addEventListener('click', generatePersonality);
+        document.getElementById('generateItem').addEventListener('click', generateItem);
+        document.getElementById('generateEnvironment').addEventListener('click', generateEnvironment);
+        document.getElementById('generateColors').addEventListener('click', generateColors);
+        document.getElementById('generateRandom').addEventListener('click', generateRandomCharacter);
+        
+        // Initialize with a random character
+        generateRandomCharacter();
+    </script>
+</body>
+</html>
