@@ -116,10 +116,28 @@
             align-items: center;
             justify-content: center;
             color: white;
-            font-weight: 300; /* Thinner font */
-            font-size: 0.6rem; /* Smaller font */
+            font-weight: 300;
+            font-size: 0.6rem;
             text-shadow: 0 1px 1px rgba(0,0,0,0.3);
             transition: all 0.2s;
+        }
+        
+        .copyright {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        .copyright a {
+            color: #666;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .copyright a:hover {
+            text-decoration: underline;
         }
         
         @media (max-width: 600px) {
@@ -163,6 +181,11 @@
             <div class="color-palette" id="colorPalette">
                 <!-- Colors will be generated here -->
             </div>
+        </div>
+        
+        <div class="copyright">
+            © 2025 dyrdev<br>
+            <a href="https://dyrdev.github.io" target="_blank" rel="noopener noreferrer">Visit dyrdev.github.io for more projects</a>
         </div>
     </div>
 
